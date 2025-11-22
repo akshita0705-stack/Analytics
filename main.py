@@ -6,35 +6,33 @@ from typing import Optional
 
 app = FastAPI()
 
-# ----------------------------
-# 1. Connect to Redis Cloud
-# ----------------------------
+# Connects to the Redis Cloud
+
 redis_url = "redis://default:i28JPAkrXJIhdnj8C3tVLNp8Y6LBwHq1@redis-18218.c305.ap-south-1-1.ec2.cloud.redislabs.com:18218"
 r = redis.from_url(redis_url, decode_responses=True)
 
-# ----------------------------
-# 2. Home Endpoint
-# ----------------------------
+
+# Home Endpoint
+
 @app.get("/")
 def home():
     return {"message": "Ingestion API is running!"}
+    
+# Event Model
 
-# ----------------------------
-# 3. Event Model (Schema)
-# ----------------------------
 class Event(BaseModel):
     event_name: str
     user_id: int
     metadata: Optional[dict] = None
 
-# ----------------------------
-# 4. Ingestion Endpoint
-# ----------------------------
+
+# Ingestion Endpoint
+
 @app.post("/ingest")
 def ingest_event(event: Event):
     event_data = event.dict()
 
-    # Debug print for terminal
+    # prints all the recieved events
     print("Received event:", event_data)
 
     # push the data into Redis Queue
@@ -42,10 +40,8 @@ def ingest_event(event: Event):
 
     return {"status": "received", "data": event_data}
 
+# Get All Events
 
-# ----------------------------
-# 5. Reporting Endpoint: Get All Events
-# ----------------------------
 @app.get("/events")
 def get_events():
     conn = sqlite3.connect("events.db")
@@ -56,7 +52,7 @@ def get_events():
 
     conn.close()
 
-    # Convert DB rows → list of dicts
+    # prints list of dicts
     events = []
     for row in rows:
         events.append({
@@ -68,3 +64,4 @@ def get_events():
         })
 
     return {"total": len(events), "events": events}
+
