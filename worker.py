@@ -3,23 +3,14 @@ import redis
 import ast
 import sqlite3
 
-# ----------------------------
-# 1. Connect to Redis
-# ----------------------------
 redis_url = "redis://default:i28JPAkrXJIhdnj8C3tVLNp8Y6LBwHq1@redis-18218.c305.ap-south-1-1.ec2.cloud.redislabs.com:18218"
 r = redis.from_url(redis_url, decode_responses=True)
 
-# ----------------------------
-# 2. Connect to SQLite Database
-# ----------------------------
 conn = sqlite3.connect("events.db")
 cursor = conn.cursor()
 
 print("Worker started and listening for events...")
 
-# ----------------------------
-# 3. Infinite loop to process events
-# ----------------------------
 while True:
     event_data = r.rpop("events_queue")
 
@@ -28,9 +19,8 @@ while True:
 
         print("Processing event:", event_dict)
 
-        # ----------------------------------------
-        # Insert into database
-        # ----------------------------------------
+        # Insert data into database
+        
         cursor.execute(
             "INSERT INTO events (event_name, user_id, metadata) VALUES (?, ?, ?)",
             (
@@ -44,3 +34,4 @@ while True:
 
     else:
         time.sleep(1)
+
