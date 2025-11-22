@@ -6,7 +6,6 @@ This project is designed for analytics tasks and includes the following main com
 - `main.py`: Entry point for running analytics operations.
 - `database.py`: Handles database connections and queries.
 - `worker.py`: Contains background processing logic or worker functions.
-- `__pycache__/`: Python cache files (auto-generated).
 
 ## Architecture Decision
 
